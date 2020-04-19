@@ -1,3 +1,3 @@
 # Winter
-A library for writing REST API's
+An online auction app
 Developed for [FSMVU](https://www.fsm.edu.tr) 2020 Computer-Networks Lecture Project
