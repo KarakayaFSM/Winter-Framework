@@ -26,7 +26,7 @@ public class Arayuz extends javax.swing.JFrame {
         lblResim.setIcon(urun);
         lblProfil.setIcon(profil);
         
-        setTitle("Online Müzakere Sistemi");
+        setTitle("Online Müzayede Sistemi");
         setResizable(false);
         
        
