@@ -1,4 +1,4 @@
-package com.fsm.Exceptions;
+package com.fsm.backend.Exceptions;
 
 public class IllegalDirectoryNameException extends RuntimeException {
 

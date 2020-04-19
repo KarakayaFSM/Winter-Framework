@@ -1,6 +1,6 @@
-package com.fsm.Annotation;
+package com.fsm.backend.Annotation;
 
-import com.fsm.Enums.TYPE;
+import com.fsm.backend.Enums.TYPE;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
