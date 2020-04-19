@@ -16,6 +16,8 @@ public class Arayuz extends javax.swing.JFrame {
      */
     public Arayuz() {
         initComponents();
+        setTitle("Online Müzakere Sistemi");
+        setResizable(false);
     }
 
     /**
@@ -27,31 +29,68 @@ public class Arayuz extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        jMenuBar2 = new javax.swing.JMenuBar();
+        jMenu3 = new javax.swing.JMenu();
+        jMenu4 = new javax.swing.JMenu();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        menuAnaSayfa = new javax.swing.JMenu();
+        menuKullaniciIslemleri = new javax.swing.JMenu();
+        menuBilgiGuncelle = new javax.swing.JMenuItem();
+        menuSifreGuncelle = new javax.swing.JMenuItem();
+        menuUrunler = new javax.swing.JMenu();
+        menuKasaIslemleri = new javax.swing.JMenu();
+
+        jMenu3.setText("File");
+        jMenuBar2.add(jMenu3);
+
+        jMenu4.setText("Edit");
+        jMenuBar2.add(jMenu4);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
+        menuAnaSayfa.setText("Ana Sayfa");
+        jMenuBar1.add(menuAnaSayfa);
+
+        menuKullaniciIslemleri.setText("Kullanıcı İşlemleri");
+
+        menuBilgiGuncelle.setText("Bilgileri Görüntüle");
+        menuKullaniciIslemleri.add(menuBilgiGuncelle);
+
+        menuSifreGuncelle.setText("Şifre Güncelle");
+        menuSifreGuncelle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSifreGuncelleActionPerformed(evt);
+            }
+        });
+        menuKullaniciIslemleri.add(menuSifreGuncelle);
+
+        jMenuBar1.add(menuKullaniciIslemleri);
+
+        menuUrunler.setText("Ürünler");
+        jMenuBar1.add(menuUrunler);
+
+        menuKasaIslemleri.setText("Kasa İşlemleri");
+        jMenuBar1.add(menuKasaIslemleri);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(185, 185, 185)
-                .addComponent(jButton1)
-                .addContainerGap(205, Short.MAX_VALUE))
+            .addGap(0, 461, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(158, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(155, 155, 155))
+            .addGap(0, 312, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void menuSifreGuncelleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSifreGuncelleActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuSifreGuncelleActionPerformed
 
     /**
      * @param args the command line arguments
@@ -89,6 +128,15 @@ public class Arayuz extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JMenu menuAnaSayfa;
+    private javax.swing.JMenuItem menuBilgiGuncelle;
+    private javax.swing.JMenu menuKasaIslemleri;
+    private javax.swing.JMenu menuKullaniciIslemleri;
+    private javax.swing.JMenuItem menuSifreGuncelle;
+    private javax.swing.JMenu menuUrunler;
     // End of variables declaration//GEN-END:variables
 }
