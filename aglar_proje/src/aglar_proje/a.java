@@ -9,6 +9,6 @@ package aglar_proje;
  *
  * @author hasan
  */
-public class muzakere {
+public class a {
     
 }
