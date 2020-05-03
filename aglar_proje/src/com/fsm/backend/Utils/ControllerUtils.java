@@ -1,15 +1,17 @@
 package com.fsm.backend.Utils;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fsm.backend.Annotation.Action;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -79,9 +81,8 @@ public class ControllerUtils {
     }
 
     private static Object[] getArgs(Request request) {
-        Object[] args = request.getParams().values().toArray();
-        List.of(args).forEach(System.out::println);
-        return args.length == 1 ? null : args;
+        if(request.getParams().isEmpty()) return null;
+        return request.getParams().values().toArray();
     }
 
     private static Object getInstanceOf(Class<?> controller) {
@@ -89,13 +90,44 @@ public class ControllerUtils {
     }
 
     private static Map<String, String> getRequestParams(HttpExchange httpExchange) {
-        String query = httpExchange.getRequestURI().getQuery();
-        return queryToMap(query);
+        //TODO if the method is GET pass params
+        //TODO if the method is POST pass body
+        String requestMethod = httpExchange.getRequestMethod();
+        if(requestMethod.equals("GET")) {
+            String query = httpExchange.getRequestURI().getQuery();
+            return queryToMap(query);
+        }
+
+        if (requestMethod.equals("POST")) {
+            String body = getBody(httpExchange);
+            return getParamsFromBody(body);
+        }
+
+        return queryToMap(httpExchange.getRequestURI().getQuery());
+    }
+
+    private static Map<String, String> getParamsFromBody(String body) {
+        try {
+            return mapper.readValue(body, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return new HashMap<>();
+    }
+
+    private static String getBody(HttpExchange httpExchange) {
+        try {
+            return new String(httpExchange.getRequestBody().readAllBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private static Map<String, String> queryToMap(String query) {
         Map<String, String> result = new HashMap<>();
-        query = query == null ? "" : query;
+        //query = query == null ? "" : query;
+        if(query == null) return result;
         for (String param : query.split("&")) {
             String[] pair = param.split("=");
             if (pair.length > 1) {
