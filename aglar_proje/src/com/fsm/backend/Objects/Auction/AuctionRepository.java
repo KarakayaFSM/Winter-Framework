@@ -1,18 +1,14 @@
 package com.fsm.backend.Objects.Auction;
 
-import com.fsm.backend.Objects.Valuable.Valuable;
+import java.util.ArrayList;
+import java.util.UUID;
 
-import java.util.*;
 
 public class AuctionRepository {
 
-    private static final List<Auction> auctions = Arrays.asList(
-            new Auction(new Valuable("Antik Vazo", 100)),
-            new Auction(new Valuable("Klasik Araba", 200)),
-            new Auction(new Valuable("Vazo", 300))
-    );
+    private static final ArrayList<Auction> auctions = new ArrayList<>();
 
-    public static List<Auction> getAllAuctions() {
+    public static ArrayList<Auction> getAllAuctions() {
         return new ArrayList<>(auctions);
     }
 
@@ -21,6 +17,11 @@ public class AuctionRepository {
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    public static Auction addAuction(Auction auction) {
+        auctions.add(auction);
+        return auction;
     }
 
 }

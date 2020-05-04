@@ -17,7 +17,6 @@ public class Auction {
 
     public Auction(Valuable valuable) {
         this.id = UUID.randomUUID();
-        System.out.println(id);
         this.name = valuable.getName() + " auction";
         currentPrice = valuable.getInitialPrice();
     }
@@ -30,9 +29,13 @@ public class Auction {
         return id;
     }
 
-    public void increase(Bid bid) {
+    public int apply(Bid bid) {
         currentPrice += bid.getHowMuch();
-        bids.add(new Bid(bid.getUserId(), currentPrice));
+        bids.add(new Bid(this.id, bid.getUserId(), currentPrice));
+        return currentPrice;
     }
 
+    public int getCurrentPrice() {
+        return currentPrice;
+    }
 }

@@ -3,7 +3,7 @@ package com.fsm.backend.Interfaces;
 import com.fsm.backend.Annotation.Action;
 import com.fsm.backend.Utils.ControllerUtils;
 import com.fsm.backend.Utils.MainUtils;
-import com.fsm.backend.Utils.Request;
+import com.fsm.backend.Objects.Request.Request;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -15,6 +15,7 @@ public interface MyHttpHandler extends HttpHandler {
     default void handle(HttpExchange httpExchange) throws IOException {
         httpExchange.getResponseHeaders().add("Content-Type", "application/json");
         Request request = ControllerUtils.getRequest(httpExchange);
+
         String response = getResponseAsJson(request);
         httpExchange.sendResponseHeaders(200, response.length());
         MainUtils.writeResponse(httpExchange, response);
