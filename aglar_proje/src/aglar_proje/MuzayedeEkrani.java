@@ -14,12 +14,12 @@ import javax.swing.JLabel;
  *
  * @author emreu
  */
-public class Arayuz extends javax.swing.JFrame {
+public class MuzayedeEkrani extends javax.swing.JFrame {
 
     /**
      * Creates new form Arayuz
      */
-    public Arayuz() {
+    public MuzayedeEkrani() {
         initComponents();
         Icon urun = new ImageIcon("C:\\Users\\emreu\\Documents\\GitHub\\Winter\\aglar_proje\\src\\aglar_proje\\urunresimleri\\images.jpg");
         Icon profil = new ImageIcon("C:\\Users\\emreu\\Documents\\GitHub\\Winter\\aglar_proje\\src\\aglar_proje\\urunresimleri\\account.png");
@@ -178,20 +178,21 @@ public class Arayuz extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Arayuz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MuzayedeEkrani.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Arayuz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MuzayedeEkrani.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Arayuz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MuzayedeEkrani.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Arayuz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MuzayedeEkrani.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Arayuz().setVisible(true);
+                new MuzayedeEkrani().setVisible(true);
             }
         });
     }
