@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fsm.backend.Annotation.Action;
 import com.fsm.backend.Enums.TYPE;
-import com.fsm.backend.Objects.Request.ParamHandler;
-import com.fsm.backend.Objects.Request.Request;
+import com.fsm.backend.Utils.Request.ParamHandler;
+import com.fsm.backend.Utils.Request.Request;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -13,18 +13,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 public class ControllerUtils {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public static Request getRequest(HttpExchange exchange) {
-        Map<String, Object> params = ParamHandler.getParams(exchange);
-        TYPE type = TYPE.valueOf(exchange.getRequestMethod());
         String action = getAction(exchange);
+        TYPE type = TYPE.valueOf(exchange.getRequestMethod());
+        Map<String, Object> params = ParamHandler.getParams(exchange);
         Class<? extends HttpHandler> controller = getHandler(exchange);
         String body = ParamHandler.getBody(exchange);
+
         return new Request()
                 .setAction(action)
                 .setController(controller)
@@ -81,7 +81,6 @@ public class ControllerUtils {
     }
 
     public static Object getTargetObject(String body, Method targetMethod) {
-
         Class<?> paramType = ParamHandler.getParamType(targetMethod);
         return ParamHandler.getObjectFrom(body, paramType);
     }

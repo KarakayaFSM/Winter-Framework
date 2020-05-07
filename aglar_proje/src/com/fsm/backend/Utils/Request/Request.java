@@ -1,4 +1,4 @@
-package com.fsm.backend.Objects.Request;
+package com.fsm.backend.Utils.Request;
 
 import com.fsm.backend.Enums.TYPE;
 import com.sun.net.httpserver.HttpHandler;

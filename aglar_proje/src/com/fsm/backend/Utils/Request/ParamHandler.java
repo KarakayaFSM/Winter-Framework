@@ -1,4 +1,4 @@
-package com.fsm.backend.Objects.Request;
+package com.fsm.backend.Utils.Request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

@@ -3,7 +3,7 @@ package com.fsm.backend.Interfaces;
 import com.fsm.backend.Annotation.Action;
 import com.fsm.backend.Utils.ControllerUtils;
 import com.fsm.backend.Utils.MainUtils;
-import com.fsm.backend.Objects.Request.Request;
+import com.fsm.backend.Utils.Request.Request;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
