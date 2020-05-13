@@ -5,10 +5,14 @@ import com.fsm.backend.Annotation.Controller;
 import com.fsm.backend.Annotation.QueryParam;
 import com.fsm.backend.Enums.TYPE;
 import com.fsm.backend.Interfaces.MyHttpHandler;
+import com.fsm.backend.Objects.Auction.Auction;
 import com.fsm.backend.Objects.User.Credentials;
 import com.fsm.backend.Objects.User.User;
+import com.fsm.backend.Utils.ControllerUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Controller(path = "users")
@@ -19,6 +23,14 @@ public class UserController implements MyHttpHandler {
         User u = new User(credentials);
         User.repository.add(u);
         return u;
+    }
+
+    @Action(path = "login", type = TYPE.POST)
+    public Collection<Auction> login(@QueryParam(type = User.class) User user) {
+        if(ControllerUtils.isAuthenticated(user)) {
+            return Auction.repository.getAll();
+        }
+        return Collections.emptyList();
     }
 
     @Action(path = "getUserById")

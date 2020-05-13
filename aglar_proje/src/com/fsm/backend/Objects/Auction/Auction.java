@@ -37,6 +37,14 @@ public class Auction implements MyObject {
         return id;
     }
 
+    public UUID getWinnerId() {
+        return winnerId;
+    }
+
+    public Valuable getItem() {
+        return item;
+    }
+
     public int increasePrice(Bid bid) {
         currentPrice += bid.getHowMuch();
         winnerId = bid.getUserId();

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fsm.backend.Annotation.Action;
 import com.fsm.backend.Enums.TYPE;
+import com.fsm.backend.Objects.Message.Command;
+import com.fsm.backend.Objects.Message.Message;
+import com.fsm.backend.Objects.User.User;
 import com.fsm.backend.Utils.Request.ParamHandler;
 import com.fsm.backend.Utils.Request.Request;
 import com.sun.net.httpserver.HttpExchange;
@@ -12,6 +15,7 @@ import com.sun.net.httpserver.HttpHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class ControllerUtils {
@@ -19,6 +23,7 @@ public class ControllerUtils {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public static Request getRequest(HttpExchange exchange) {
+
         String action = getAction(exchange);
         TYPE type = TYPE.valueOf(exchange.getRequestMethod());
         Map<String, Object> params = ParamHandler.getParams(exchange);
@@ -109,6 +114,34 @@ public class ControllerUtils {
                 target.type().equals(request.getType());
     }
 
+    public static Message getServerStoppedCommand() {
+        return new Message("server")
+                .setCommand(new Command("STOPSERVER"));
+    }
+
+    public static Object getObjectFrom(String jsonString) {
+        Object message = null;
+        try {
+            message = mapper.readValue(jsonString, Message.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return Objects.requireNonNull(message);
+    }
+
+    public static String getJsonString(Message message) {
+        String jsonString = null;
+        try {
+            jsonString = ControllerUtils.
+                    getMapper().
+                    writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(message);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return Objects.requireNonNull(jsonString);
+    }
+
     private static Object getInstanceOf(Class<?> controller) {
         return MainUtils.getInstance(controller);
     }
@@ -116,4 +149,15 @@ public class ControllerUtils {
     public static ObjectMapper getMapper() {
         return mapper;
     }
+
+    public static boolean isAuthenticated(User user) {
+        try {
+            User user1 = User.repository.findById(user.getId());
+            return user.getUserName().equals(user1.getUserName())
+                    && user.getPassword().equals(user1.getPassword());
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
 }

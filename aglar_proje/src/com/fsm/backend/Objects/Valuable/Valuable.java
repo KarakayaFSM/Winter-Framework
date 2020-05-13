@@ -12,6 +12,7 @@ public class Valuable implements MyObject {
     private UUID id;
     private String name;
     private int initialPrice;
+    //TODO Utilize status variable (sold, not sold)
     private Status status;
 
     @JsonCreator

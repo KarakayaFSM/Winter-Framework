@@ -43,6 +43,14 @@ public class User implements MyObject {
         currency -= lastPrice;
     }
 
+    public static String getUserNameById(String id) {
+        return repository.findById(UUID.fromString(id)).userName;
+    }
+
+    public static String getUserNameById(UUID id) {
+        return repository.findById(id).userName;
+    }
+
     public UUID getId() {
         return id;
     }

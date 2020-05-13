@@ -23,6 +23,7 @@ public class MainUtils {
         List<Class<?>> controllers = MainUtils.
                 getControllers(CONTROLLER_PACKAGE);
         createContexts(server, controllers);
+
         server.setExecutor(null);
         server.start();
         System.out.println("Server started on port: " + PORT);
