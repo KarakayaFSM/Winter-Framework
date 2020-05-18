@@ -5,47 +5,42 @@ import com.fsm.backend.Annotation.Controller;
 import com.fsm.backend.Annotation.QueryParam;
 import com.fsm.backend.Enums.TYPE;
 import com.fsm.backend.Interfaces.MyHttpHandler;
-import com.fsm.backend.Objects.Auction.Auction;
-import com.fsm.backend.Objects.User.Credentials;
-import com.fsm.backend.Objects.User.User;
+import com.fsm.backend.Objects.Message.Message;
+import com.fsm.backend.Objects.User.Credentials.LoginCredentials;
+import com.fsm.backend.Objects.User.Credentials.SignUpCredentials;
+import com.fsm.backend.Objects.User.UserRepo;
 import com.fsm.backend.Utils.ControllerUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 @Controller(path = "users")
 public class UserController implements MyHttpHandler {
 
     @Action(path = "createUser", type = TYPE.POST)
-    public User create(@QueryParam(type = Credentials.class) Credentials credentials) {
-        User u = new User(credentials);
-        User.repository.add(u);
-        return u;
+    public Message create(@QueryParam(type = Message.class) Message message) {
+        SignUpCredentials credentials = message.getCommand().getSignUpCredentials();
+        return UserRepo.getSignUpResponse(credentials);
     }
 
     @Action(path = "login", type = TYPE.POST)
-    public Collection<Auction> login(@QueryParam(type = User.class) User user) {
-        if(ControllerUtils.isAuthenticated(user)) {
-            return Auction.repository.getAll();
-        }
-        return Collections.emptyList();
+    public Message login(@QueryParam(type = Message.class) Message message) {
+        LoginCredentials credentials = message.getCommand().getLoginCredentials();
+        return UserRepo.getLoginResponse(credentials);
     }
 
-    @Action(path = "getUserById")
-    public User getUserById(String id) {
-        return User.repository.findById(id);
+    @Action(path = "logout", type = TYPE.POST)
+    public Message logout(@QueryParam(type = Message.class) Message message) {
+        int sender = message.getCommand().getSenderPort();
+        UserRepo.removeUser(sender);
+        return ControllerUtils.getDummyResponse();
     }
 
-    @Action(path = "updateUser", type = TYPE.POST)
-    public User update(@QueryParam(type = User.class) User user) {
-        return User.repository.update(user);
-    }
+//    @Action(path = "updateUser", type = TYPE.POST)
+//    public User update(@QueryParam(type = User.class) User user) {
+//        return User.repository.update(user);
+//    }
 
-    @Action(path = "getAllUsers")
-    public List<User> getAllUsers() {
-        return new ArrayList<>(User.repository.getAll());
-    }
+//    @Action(path = "getAllUsers")
+//    public List<User> getAllUsers() {
+//        return new ArrayList<>(User.repository.getAll());
+//    }
 
 }

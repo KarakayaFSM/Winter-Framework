@@ -7,9 +7,15 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public abstract class ListRepository<T extends MyObject> implements Repository<T> {
+public abstract class ListRepository<T extends MyObject>
+        extends ArrayList<T>
+        implements Repository<T> {
 
-    List<T> items = new ArrayList<>();
+    public ListRepository() { }
+
+    public ListRepository(Collection<T> sample) {
+        this.addAll(sample);
+    }
 
     @Override
     public T findById(String id) {
@@ -18,26 +24,25 @@ public abstract class ListRepository<T extends MyObject> implements Repository<T
 
     @Override
     public T findById(UUID id) {
-        return items.stream()
+        return this.stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElseThrow();
     }
 
     @Override
-    public Collection<T> getAll() {
-        return new ArrayList<>(items);
+    public List<T> getAll() {
+        return new ArrayList<>(this);
     }
 
-    @Override
-    public T add(T item) {
-        items.add(item);
+    public T addAndGet(T item) {
+        this.add(item);
         return item;
     }
 
     @Override
-    public Collection<T>filter(Predicate<T> condition) {
-        return items.stream()
+    public Collection<T> filter(Predicate<T> condition) {
+        return this.stream()
                 .filter(condition)
                 .collect(Collectors.toList());
     }
@@ -45,17 +50,16 @@ public abstract class ListRepository<T extends MyObject> implements Repository<T
     @Override
     public T update(T updated) {
         removeById(updated.getId());
-        return add(updated);
+        return addAndGet(updated);
     }
 
     @Override
     public void removeById(UUID id) {
         System.out.println("id: " + id.toString());
-        T toRemove = items.stream()
+        T toRemove = this.stream()
                 .filter(item ->
                         item.getId().equals(id))
                 .findFirst().orElseThrow();
-        items.remove(toRemove);
+        this.remove(toRemove);
     }
-
 }

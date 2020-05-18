@@ -2,12 +2,20 @@ package com.fsm.backend.Objects.Message;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fsm.backend.Objects.Auction.Auction;
 import com.fsm.backend.Objects.Auction.Bid;
-import com.fsm.backend.Objects.User.User;
+import com.fsm.backend.Objects.DAO.AuctionDAO;
 
 public class Event {
-    String eventType;
+
+    private String eventType;
+
+    @JsonProperty("auctionDAO")
+    private AuctionDAO auctionDAO; //used by auction created event
+
+    @JsonProperty("bid")
+    private Bid bid;
+
+    //TODO Message Dışında Hiçbirşeyin altına is... metodu koyma
 
     @JsonCreator
     public Event(@JsonProperty("eventType") String eventType) {
@@ -18,15 +26,22 @@ public class Event {
         return eventType;
     }
 
-    public static Message getAuctionCreatedEvent(Auction auction) {
-        return new Message("server")
-                .setEvent(new Event("AUCTION_CREATED"))
-                .setAuction(auction);
+    public Bid getBid() {
+        return bid;
     }
 
-    public static Message getPriceUpdatedEvent(Bid bid, int newPrice) {
-        return new Message(User.getUserNameById(bid.getUserId()))
-                .setEvent(new Event("PRICE_UPDATED"))
-                .setNewPrice(newPrice);
+    public Event setBid(Bid bid) {
+        this.bid = bid;
+        return this;
     }
+
+    public AuctionDAO getAuctionDAO() {
+        return auctionDAO;
+    }
+
+    public Event setAuctionDAO(AuctionDAO auctionDAO) {
+        this.auctionDAO = auctionDAO;
+        return this;
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.fsm.backend.Objects.DAO;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fsm.backend.Objects.Auction.Auction;
 import com.fsm.backend.Objects.Valuable.Valuable;
 
@@ -10,16 +12,29 @@ public class AuctionDAO {
     private UUID id;
     private String name;
     private int currentPrice;
-    private UUID winnerId;
     private Valuable item;
 
+    @JsonProperty("winner")
+    private String winner;
+
+    @JsonCreator
+    public AuctionDAO(@JsonProperty("id") String id,
+                      @JsonProperty("name") String name,
+                      @JsonProperty("currentPrice") int currentPrice,
+                      @JsonProperty("item") Valuable item) {
+        this.id = UUID.fromString(id);
+        this.name = name;
+        this.currentPrice = currentPrice;
+        this.item = item;
+    }
+
     public AuctionDAO(UUID id,
-                      String name, int currentPrice,
-                      UUID winnerId, Valuable item) {
+                      String name,
+                      int currentPrice,
+                      Valuable item) {
         this.id = id;
         this.name = name;
         this.currentPrice = currentPrice;
-        this.winnerId = winnerId;
         this.item = item;
     }
 
@@ -35,8 +50,13 @@ public class AuctionDAO {
         return currentPrice;
     }
 
-    public UUID getWinnerId() {
-        return winnerId;
+    public String getWinner() {
+        return winner;
+    }
+
+    public AuctionDAO setWinner(String winner) {
+        this.winner = winner;
+        return this;
     }
 
     public Valuable getItem() {
@@ -47,7 +67,6 @@ public class AuctionDAO {
         return new AuctionDAO(auction.getId(),
                 auction.getName(),
                 auction.getCurrentPrice(),
-                auction.getWinnerId(),
                 auction.getItem());
     }
 

@@ -8,7 +8,7 @@ public interface Repository<T extends MyObject>{
     T findById(String id);
     T findById(UUID id);
     Collection<T> getAll();
-    T add(T item);
+    T addAndGet(T item);
     Collection<T>filter(Predicate<T> condition);
     T update(T updated);
     void removeById(UUID id);

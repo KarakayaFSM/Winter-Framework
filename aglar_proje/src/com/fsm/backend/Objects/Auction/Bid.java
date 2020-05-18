@@ -8,24 +8,25 @@ import java.util.UUID;
 public class Bid {
 
     private UUID auctionId;
-    private UUID userId;
+    private String userName;
     private UUID bidId;
-    private int howMuch;
+    private int newPrice;
 
     @JsonCreator
-    public Bid(@JsonProperty("auctionId") String auctionId,
-               @JsonProperty("userId") String userId,
-               @JsonProperty("howMuch") int howMuch) {
+    public Bid(@JsonProperty("bidId") String bidId,
+               @JsonProperty("auctionId") String auctionId,
+               @JsonProperty("userName") String userName,
+               @JsonProperty("newPrice") int newPrice) {
+        this.bidId = UUID.fromString(bidId);
         this.auctionId = UUID.fromString(auctionId);
-        this.userId = UUID.fromString(userId);
-        this.howMuch = howMuch;
-        this.bidId = UUID.randomUUID();
+        this.userName = userName;
+        this.newPrice = newPrice;
     }
 
-    public Bid(UUID auctionId, UUID userId, int howMuch) {
+    public Bid(UUID auctionId, String userName, int newPrice) {
         this.auctionId = auctionId;
-        this.userId = userId;
-        this.howMuch = howMuch;
+        this.userName = userName;
+        this.newPrice = newPrice;
         this.bidId = UUID.randomUUID();
     }
 
@@ -33,12 +34,12 @@ public class Bid {
         return auctionId;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public int getHowMuch() {
-        return howMuch;
+    public int getNewPrice() {
+        return newPrice;
     }
 
     public UUID getBidId() {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package aglar_proje;
+package com.fsm.frontend;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -77,7 +77,6 @@ public class GirisEkrani extends javax.swing.JFrame {
         btnGeriEkle = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(500, 225));
         getContentPane().setLayout(new java.awt.CardLayout());
 
         PanelGiris.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

@@ -16,9 +16,9 @@ import java.util.Optional;
 public class MainUtils {
 
     private static final String CONTROLLER_PACKAGE = "com.fsm.backend.Controller";
-    private static final int PORT = 8080;
+    private static final int HTTP_SERVER_PORT = 8080;
 
-    public static void startServer() {
+    public static void startHTTPServer() {
         HttpServer server = Objects.requireNonNull(createServer());
         List<Class<?>> controllers = MainUtils.
                 getControllers(CONTROLLER_PACKAGE);
@@ -26,7 +26,7 @@ public class MainUtils {
 
         server.setExecutor(null);
         server.start();
-        System.out.println("Server started on port: " + PORT);
+        System.out.println("Http Server started on port: " + HTTP_SERVER_PORT);
     }
 
     public static Object getInstance(Class<?> cls) {
@@ -65,7 +65,7 @@ public class MainUtils {
     public static HttpServer createServer() {
         try {
             return HttpServer.create(
-                    new InetSocketAddress(PORT), 0);
+                    new InetSocketAddress(HTTP_SERVER_PORT), 0);
         } catch (IOException e) {
             e.printStackTrace();
         }

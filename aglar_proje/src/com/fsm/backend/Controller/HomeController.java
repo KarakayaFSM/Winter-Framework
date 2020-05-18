@@ -7,55 +7,45 @@ import com.fsm.backend.Enums.TYPE;
 import com.fsm.backend.Interfaces.MyHttpHandler;
 import com.fsm.backend.Objects.Auction.Auction;
 import com.fsm.backend.Objects.Auction.Bid;
-import com.fsm.backend.Objects.Message.Event;
+import com.fsm.backend.Objects.DAO.AuctionDAO;
 import com.fsm.backend.Objects.Message.Message;
-import com.fsm.backend.Objects.Valuable.Valuable;
 import com.fsm.backend.Utils.Broadcast;
-
-import java.util.Collection;
+import com.fsm.backend.Utils.ControllerUtils;
 
 @SuppressWarnings("unused")
 @Controller(path = "auctions")
 public class HomeController implements MyHttpHandler {
 
-    //Once auction is started, other users cannot join.
-
-    @Action(type = TYPE.GET)
-    public String index() {
-        return "Welcome to Auctions";
-    }
-
     @Action(path = "createAuction", type = TYPE.POST)
-    public Auction createAuction(@QueryParam(type = Valuable.class) Valuable valuable) {
-        Auction auction = new Auction(valuable);
+    public Message createAuction(@QueryParam(type = Message.class) Message message) {
+        Auction auction = new Auction(message.getEvent().getAuctionDAO().getItem());
         Auction.repository.add(auction);
-        Message auctionCreated = Event.getAuctionCreatedEvent(auction);
+        Message auctionCreated = ControllerUtils.getAuctionCreatedEvent(auction);
         Broadcast.broadCastMessage(auctionCreated);
-        return auction;
+        System.out.println("Create auction requested");
+        return ControllerUtils.getDummyResponse();
     }
 
     @Action(path = "getAllAuctions")
-    public Collection<Auction> getAllAuctions() {
-        return Auction.repository.getAll();
+    public Message getAllAuctions() {
+        return ControllerUtils
+                .getAuctionsRsp(Auction.
+                        repository.getAllAsDAO());
     }
 
     @Action(path = "getAuctionById")
-    public Auction getAuctionById(String id) {
-        return Auction.repository.findById(id);
+    public AuctionDAO getAuctionById(String id) {
+        return AuctionDAO.getDAOFromAuction(Auction.repository.findById(id));
     }
 
     @Action(path = "updatePrice", type = TYPE.POST)
-    public int updatePrice(@QueryParam(type = Bid.class) Bid bid) {
-        int newPrice = increasePrice(bid);
-        Broadcast.broadCastMessage(Event.
-                getPriceUpdatedEvent(bid, newPrice));
-        return newPrice;
-    }
+    public Message updatePrice(@QueryParam(type = Message.class) Message message) {
+        Bid update = ControllerUtils.updatePrice(message.getEvent().getBid());
+        Message event = ControllerUtils.getPriceUpdatedEvent(update);
+        System.out.println("PRICE UPDATED");
+        Broadcast.broadCastMessage(event);
 
-    private int increasePrice(Bid bid) {
-        return Auction.repository
-                .findById(bid.getAuctionId())
-                .increasePrice(bid);
+        return ControllerUtils.getDummyResponse();
     }
 
 }

@@ -1,30 +1,13 @@
 package com.fsm.backend.Objects.Message;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fsm.backend.Objects.Auction.Auction;
-
 public class Message {
 
-    private String senderName;
     private Event event;
     private Command command;
-    private Auction auction; //used by auction created event
-    private int newPrice; //used by price updated event
+    private Error error;
+    private Response response;
 
-    @JsonCreator
-    public Message(@JsonProperty("senderName") String senderName) {
-        this.senderName = senderName;
-    }
-
-    public Message setEvent(Event event) {
-        this.event = event;
-        return this;
-    }
-
-    public String getSenderName() {
-        return senderName;
-    }
+    public Message() {}
 
     public Event getEvent() {
         return event;
@@ -34,12 +17,22 @@ public class Message {
         return command;
     }
 
-    public Auction getAuction() {
-        return auction;
+    public Error getError() {
+        return error;
     }
 
-    public int getNewPrice() {
-        return newPrice;
+    public Response getResponse() {
+        return response;
+    }
+
+    public Message setResponse(Response response) {
+        this.response = response;
+        return this;
+    }
+
+    public Message setEvent(Event event) {
+        this.event = event;
+        return this;
     }
 
     public Message setCommand(Command command) {
@@ -47,23 +40,17 @@ public class Message {
         return this;
     }
 
-    Message setAuction(Auction auction) {
-        //Triggered by auction created event
-        this.auction = auction;
+    public Message setError(Error error) {
+        this.error = error;
         return this;
     }
 
-    Message setNewPrice(int newPrice) {
-        //Triggered by price updated event
-        this.newPrice = newPrice;
-        return this;
+    public boolean isError() {
+        return error != null;
     }
 
-    public boolean isEvent() {
-        return event != null;
-    }
+    public boolean isEvent() {return event != null;}
 
-    public boolean isCommand() {
-        return command != null;
-    }
+    public boolean isCommand() {return command != null;}
+
 }

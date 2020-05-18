@@ -1,17 +1,18 @@
 package com.fsm.backend.Utils;
 
-import com.fsm.backend.Objects.Message.Command;
 import com.fsm.backend.Objects.Message.Message;
+import com.fsm.backend.Objects.Message.MessageRepo;
+import com.fsm.backend.Objects.User.UserRepo;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.net.*;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -110,12 +111,12 @@ public class Broadcast extends javax.swing.JFrame {
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
         setPort();
         this.setTitle("Server");
-        Utils.start();
+         start();
         toggleStartStopButtons();
     }//GEN-LAST:event_jButtonStartActionPerformed
 
     private void jButtonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStopActionPerformed
-        Utils.stop();
+         stop();
         afterServerStop();
     }//GEN-LAST:event_jButtonStopActionPerformed
 
@@ -125,31 +126,33 @@ public class Broadcast extends javax.swing.JFrame {
     }
 
     private void afterServerStop() {
-        Utils.socket.close();
+         socket.close();
         toggleStartStopButtons();
     }
 
     private void setPort() {
         try {
-            Utils.port = Integer.parseInt(tfPort.getText());
+             UDP_SERVER_PORT = Integer.parseInt(tfPort.getText());
         } catch (NumberFormatException e) {
-            Utils.port = 8081;
+             UDP_SERVER_PORT = 8081;
         }
-        System.out.println("port set to: " + Utils.port);
+        System.out.println("UDP_SERVER_PORT set to: " +  UDP_SERVER_PORT);
     }
 
     public static void broadCastMessage(Message message) {
-        Utils.BroadCastMessage(ControllerUtils.getJsonString(message));
+         BroadCastMessage(ControllerUtils.getJsonString(message));
     }
 
-    private static final class Utils {
+    public static void broadCastMessage(Message message, Predicate<UUID> filter) {
+         BroadCastMessage(ControllerUtils.getJsonString(message), filter);
+    }
+
+
 
         private static final String HOST = "localhost";
-        private static final int SERVER_PORT = 8081;
-        private static int port;
+        private static int UDP_SERVER_PORT;
 
         private static DatagramSocket socket;
-        private static Set<Integer> users = new HashSet<>();
 
         private static STATE currentState;
 
@@ -157,11 +160,7 @@ public class Broadcast extends javax.swing.JFrame {
                 = Executors.newCachedThreadPool(
                 Executors.defaultThreadFactory());
 
-        private Utils() {
-        }
-
         private static Void listen() {
-            System.out.println("started listening on port: " + SERVER_PORT);
             while (currentState == STATE.ACTIVE) {
                 DatagramPacket packet = getPacketForReceive();
                 waitFor(packet);
@@ -169,18 +168,28 @@ public class Broadcast extends javax.swing.JFrame {
                         getMessageFrom(Objects.requireNonNull(packet));
                 System.out.println("message: " + messageJson);
                 Message message = (Message) ControllerUtils.getObjectFrom(messageJson);
-                processMessage(message, packet.getPort());
+                processMessage(message);
             }
             return null;
         }
 
         private static void BroadCastMessage(String messageJson) {
-            System.out.println("Message: " + messageJson);
             byte[] data = messageJson.getBytes();
-            users.forEach(userPort -> {
-                DatagramPacket packet = getPacketForSend(data, userPort);
+            UserRepo.activeUsers.forEach((portNum, auctionId) -> {
+                DatagramPacket packet = getPacketForSend(data, portNum);
                 send(packet);
-                System.out.println("message sent to: " + userPort);
+                System.out.println("message sent to: " + portNum + " for auction: " + auctionId);
+            });
+        }
+
+        private static void BroadCastMessage(String messageJson, Predicate<UUID> filter) {
+            UserRepo.activeUsers.forEach((portNum, auctionId) -> {
+                byte[] data = messageJson.getBytes();
+                if (filter.test(auctionId)) {
+                    DatagramPacket packet = getPacketForSend(data, portNum);
+                    send(packet);
+                    System.out.println("message sent to: " + portNum + " for auction: " + auctionId);
+                }
             });
         }
 
@@ -189,42 +198,27 @@ public class Broadcast extends javax.swing.JFrame {
             String stopCommand = ControllerUtils.
                     getJsonString(stopMessage);
             byte[] stopBytes = stopCommand.getBytes();
-            DatagramPacket packet = getPacketForSend(stopBytes, SERVER_PORT);
+            DatagramPacket packet = getPacketForSend(stopBytes, UDP_SERVER_PORT);
             send(packet);
         }
 
         private static void start() {
-            socket = createSocket(port);
+            socket = createSocket(UDP_SERVER_PORT);
             currentState = STATE.ACTIVE;
-            submitTask(Utils::listen);
+            submitTask(Broadcast::listen);
         }
 
-        private static void processMessage(Message message, int senderPort) {
-            if(message.isCommand()) {
+        public static void processMessage(Message message) {
+            if (message.isCommand()) {
                 if (isServerStopped(message)) {
-                    System.out.println("server at " + Utils.port + " stopped");
-                    return;
+                    System.out.println("server at " +  UDP_SERVER_PORT + " stopped");
+                    //return;
                 }
-                processCommand(senderPort, message.getCommand());
-            }
-
-            Broadcast.broadCastMessage(message);
-        }
-
-        private static void processCommand(int senderPort, Command command) {
-            if (command.getCommandType().equals("CLIENT_LEFT")) {
-                users.remove(senderPort);
-                System.out.println(senderPort + ":" +
-                        senderPort + " left the room");
-            } if (command.getCommandType().equals("CLIENT_STARTED")) {
-                addUserPort(senderPort);
-                System.out.println(senderPort + ":" +
-                        senderPort + " joined the room");
             }
         }
 
         private static boolean isServerStopped(Message message) {
-            return message.getCommand().getCommandType().equals("STOPSERVER");
+            return message.getCommand().getCommandType().equals(MessageRepo.STOP_SERVER_CMD);
         }
 
         private static void stop() {
@@ -238,11 +232,6 @@ public class Broadcast extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(Broadcast.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-
-        private static void addUserPort(int userPort) {
-            users.add(userPort);
-            System.out.println("users after addition of: " + userPort + " " + users);
         }
 
         private static void send(DatagramPacket packet) {
@@ -276,7 +265,7 @@ public class Broadcast extends javax.swing.JFrame {
                 return new DatagramPacket(data,
                         data.length,
                         InetAddress.getByName(HOST),
-                        SERVER_PORT);
+                        UDP_SERVER_PORT);
             } catch (UnknownHostException ex) {
                 Logger.getLogger(Broadcast.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -296,9 +285,9 @@ public class Broadcast extends javax.swing.JFrame {
             }
             return datagramSocket;
         }
-    }
 
-    public static void start() {
+
+    public static void begin() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
@@ -306,7 +295,7 @@ public class Broadcast extends javax.swing.JFrame {
         }
 
         java.awt.EventQueue.invokeLater(() -> new Broadcast().setVisible(true));
-        MainUtils.startServer();
+        MainUtils.startHTTPServer();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

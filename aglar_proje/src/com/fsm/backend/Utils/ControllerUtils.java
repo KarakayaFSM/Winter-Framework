@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fsm.backend.Annotation.Action;
 import com.fsm.backend.Enums.TYPE;
-import com.fsm.backend.Objects.Message.Command;
-import com.fsm.backend.Objects.Message.Message;
-import com.fsm.backend.Objects.User.User;
+import com.fsm.backend.Objects.Auction.Auction;
+import com.fsm.backend.Objects.Auction.Bid;
+import com.fsm.backend.Objects.DAO.AuctionDAO;
+import com.fsm.backend.Objects.Message.*;
 import com.fsm.backend.Utils.Request.ParamHandler;
 import com.fsm.backend.Utils.Request.Request;
 import com.sun.net.httpserver.HttpExchange;
@@ -14,9 +15,11 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 public class ControllerUtils {
 
@@ -115,8 +118,8 @@ public class ControllerUtils {
     }
 
     public static Message getServerStoppedCommand() {
-        return new Message("server")
-                .setCommand(new Command("STOPSERVER"));
+        return new Message()
+                .setCommand(new Command(MessageRepo.STOP_SERVER_CMD));
     }
 
     public static Object getObjectFrom(String jsonString) {
@@ -150,14 +153,37 @@ public class ControllerUtils {
         return mapper;
     }
 
-    public static boolean isAuthenticated(User user) {
-        try {
-            User user1 = User.repository.findById(user.getId());
-            return user.getUserName().equals(user1.getUserName())
-                    && user.getPassword().equals(user1.getPassword());
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+    public static Message getAuctionCreatedEvent(Auction auction) {
+        return new Message()
+                .setEvent(new Event(MessageRepo.AUCTION_CREATED_EVT)
+                        .setAuctionDAO(AuctionDAO.getDAOFromAuction(auction)));
+    }
+
+    public static Message getPriceUpdatedEvent(Bid bid) {
+        return new Message()
+                .setEvent(new Event(MessageRepo.PRICE_UPDATED_EVT)
+                        .setBid(bid));
+    }
+
+    public static Message getDummyResponse() {
+        return new Message()
+                .setResponse(new Response(MessageRepo.DUMMY_RSP));
+    }
+
+    public static Bid updatePrice(Bid bid) {
+        return Auction.repository
+                .findById(bid.getAuctionId())
+                .updatePrice(bid);
+    }
+
+    public static Message getAuctionsRsp(List<AuctionDAO> auctions) {
+        return new Message()
+                .setResponse(new Response(MessageRepo.GET_AUCTIONS_RSP)
+                .setAuctionDAOs(auctions));
+    }
+
+    public static Predicate<UUID> toSameAuction(UUID TargetAuctionId) {
+        return auctionId -> auctionId.equals(TargetAuctionId);
     }
 
 }

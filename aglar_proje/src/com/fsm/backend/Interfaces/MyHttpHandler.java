@@ -15,7 +15,6 @@ public interface MyHttpHandler extends HttpHandler {
     default void handle(HttpExchange httpExchange) throws IOException {
         httpExchange.getResponseHeaders().add("Content-Type", "application/json");
         Request request = ControllerUtils.getRequest(httpExchange);
-
         String response = getResponseAsJson(request);
         httpExchange.sendResponseHeaders(200, response.length());
         MainUtils.writeResponse(httpExchange, response);
@@ -31,7 +30,10 @@ public interface MyHttpHandler extends HttpHandler {
             System.out.println("index requested");
             return index();
         }
-        return ControllerUtils.responseAsJsonString(request);
+        String response = ControllerUtils.responseAsJsonString(request);
+        System.out.println("SERVER RESPONSE:");
+        System.out.println(response);
+        return response;
     }
 
 }

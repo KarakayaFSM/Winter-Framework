@@ -5,7 +5,7 @@ import com.fsm.backend.Utils.Broadcast;
 public class Main {
 
     public static void main(String[] args) {
-        Broadcast.start();
+        Broadcast.begin();
     }
 
 //    private static void dene(Message message) {

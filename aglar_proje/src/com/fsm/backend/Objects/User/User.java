@@ -2,31 +2,27 @@ package com.fsm.backend.Objects.User;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fsm.backend.Interfaces.MyObject;
-import com.fsm.backend.Interfaces.Repository;
+import com.fsm.backend.Objects.User.Credentials.SignUpCredentials;
 import com.fsm.backend.Objects.Valuable.Valuable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "unused"})
-public class User implements MyObject {
+public class User {
 
-    private UUID id;
     private String userName;
     private String password;
     private String mail;
     private int currency;
     private int limit;
     private int increaseRate = 0;
+    private int portNum;
 
-    public static Repository<User> repository = UserRepository.getInstance();
     private final List<Valuable> itemCollection = new ArrayList<>();
 
     @JsonCreator
-    public User(@JsonProperty("credentials") Credentials credentials) {
-        setId(credentials.getId());
+    public User(@JsonProperty("credentials") SignUpCredentials credentials) {
         this.userName = credentials.getUserName();
         this.password = credentials.getPassword();
         this.currency = credentials.getCurrency();
@@ -34,25 +30,9 @@ public class User implements MyObject {
         this.mail = credentials.getMail();
     }
 
-    private void setId(UUID id) {
-        this.id = id == null ? UUID.randomUUID() : id;
-    }
-
     public void buy(Valuable valuable, int lastPrice) {
         itemCollection.add(valuable);
         currency -= lastPrice;
-    }
-
-    public static String getUserNameById(String id) {
-        return repository.findById(UUID.fromString(id)).userName;
-    }
-
-    public static String getUserNameById(UUID id) {
-        return repository.findById(id).userName;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public String getUserName() {
@@ -79,10 +59,22 @@ public class User implements MyObject {
         return increaseRate;
     }
 
+    public int getPortNum() {
+        return portNum;
+    }
+
+    public User setPortNum(int portNum) {
+        this.portNum = portNum;
+        return this;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", mail='" + mail + '\'' +
@@ -90,5 +82,4 @@ public class User implements MyObject {
                 ", limit=" + limit +
                 ", increaseRate=" + increaseRate +
                 '}';
-    }
-}
+    }}
