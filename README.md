@@ -1,3 +1,3 @@
 # Winter
-An Online Auction App
-Developed for [FSMVU](https://www.fsm.edu.tr) 2020 Computer-Networks Lecture Project
+
+A humble Web framework for developing REST API’s with a spring boot like fashion using annotations.
